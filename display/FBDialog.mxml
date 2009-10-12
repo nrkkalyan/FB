@@ -156,8 +156,6 @@
     protected function htmlLocationChange(event:Event):void {
       if (!htmlWindow || htmlWindow.location == '' || closed) return;
 
-      Output.bug(htmlWindow.location);
-
       // If an htmlLocationChange doesn't fire eventually
       // then we'll reload
       reloadTimer.start();
