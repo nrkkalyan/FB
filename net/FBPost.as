@@ -76,6 +76,35 @@ package fb.net {
       writeLineBreak();
     }
 
+    public function writeFileDataAsByteArray(fileName:String, ba:ByteArray):void {
+	  var bytes:String;
+
+      writeBoundary();
+      writeLineBreak();
+
+      bytes = 'Content-Disposition: form-data; filename="';
+      for (var i:Number=0; i < bytes.length; i++)  {
+        postData.writeByte(bytes.charCodeAt(i));
+      }
+      postData.writeUTFBytes(fileName);
+
+      writeQuotationMark();
+      writeLineBreak();
+
+      bytes = 'Content-Type: image/jpg';
+      for (i=0; i < bytes.length; i++) {
+        postData.writeByte(bytes.charCodeAt(i));
+      }
+
+      writeLineBreak();
+      writeLineBreak();
+
+      //file.data.position = 0;
+      postData.writeBytes(ba);
+
+      writeLineBreak();
+	}
+
     public function get data():ByteArray {
       postData.position = 0;
       return postData;

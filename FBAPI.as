@@ -113,6 +113,63 @@ package fb {
       return loader;
     }
 
+	//Use the following 2 photo upload methods if your File reference
+	//did not come from a native File Browser (eg using File.Browser)
+	public static function uploadPhotoAsFileStream(fileName:String, photo:FileStream, callArgs:Object = null):JSONLoader {
+	   if (!FBConnect.api_key || !FBConnect.session)
+	      return null;
+
+	   var data:ByteArray = new ByteArray();
+	   photo.readBytes(data);
+
+	   var urlArgs:URLVariables = flattenArgs("photos.upload", callArgs);
+	   var post:FBPost= new FBPost();
+	   
+	   for (var urlArg:String in urlArgs)
+	      post.writePostData(urlArg, urlArgs[urlArg]);
+	 
+	   post.writeFileDataAsByteArray(fileName, data);
+	   post.close();
+
+	   var loader:JSONLoader = new JSONLoader();
+
+	   var request:URLRequest = new URLRequest(restURL);
+	   request.method = URLRequestMethod.POST;
+	   request.contentType = "multipart/form-data; boundary="+FBPost.boundary;
+	   request.data = post.data;
+	   loader.dataFormat = URLLoaderDataFormat.BINARY;
+	   loader.load(request);
+
+	   return loader;
+   }
+		
+   public static function uploadPhotoByteArray(fileName:String, data:ByteArray,
+      callArgs:Object = null):JSONLoader {
+      
+      if (!FBConnect.api_key || !FBConnect.session)
+        return null;
+
+      var urlArgs:URLVariables = flattenArgs("photos.upload", callArgs);
+      var post:FBPost= new FBPost();
+      
+      for (var urlArg:String in urlArgs)
+        post.writePostData(urlArg, urlArgs[urlArg]);
+      
+      post.writeFileDataAsByteArray(fileName, data);
+      post.close();
+
+      var loader:JSONLoader = new JSONLoader();
+
+      var request:URLRequest = new URLRequest(restURL);
+      request.method = URLRequestMethod.POST;
+      request.contentType = "multipart/form-data; boundary="+FBPost.boundary;
+      request.data = post.data;
+      loader.dataFormat = URLLoaderDataFormat.BINARY;
+      loader.load(request);
+
+      return loader;
+    }
+	
     // Utility function splits out fql.multiquery to it's parts
     public static function multiqueryByKey(data:Object):Object {
       var resultsByKey:Object = new Object();

@@ -82,8 +82,11 @@ package fb.net {
       super.load(new_request);
     }
 
+	//call toString on data to ensure the data format is "stringized" before
+	//we try to index it. (uploading photos with a ByteArray caused this) to
+	//crash so I thought I'd fix it in case anything else returns binary, etc.
     private function success(event:Event):void {
-      if (event.target.data.indexOf("<") != 0) {
+      if (event.target.data.toString().indexOf("<") != 0) {
         var eventData:* = JSON.decode(event.target.data);
         if (eventData.constructor == Object && eventData.error_code) {
           Output.error("Server Error", eventData);
